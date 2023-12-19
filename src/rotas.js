@@ -2,9 +2,10 @@ const express = require('express');
 
 const rotas = express();
 
-const usuariosController = require('./controllers/usuarios');
-const usuariosMiddleware = require('./middlewares/usuarios');
+const { cadastrar, listar } = require('./controllers/usuarios');
+const {} = require('./middlewares/usuarios');
 
-rotas.post('/usuarios', usuariosController.cadastrar);
+rotas.get('/usuarios', listar);
+rotas.post('/usuarios', cadastrar);
 
 module.exports = rotas;

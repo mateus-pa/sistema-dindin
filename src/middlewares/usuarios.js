@@ -1,5 +1,5 @@
 const pool = require('../database/conexao');
 
-module.exports = {
+usuariosMiddlewares = {};
 
-}
+module.exports = usuariosMiddlewares;
