@@ -48,7 +48,7 @@ usuariosController.cadastrar = async function (req, res) {
     return res.status(201).json(novoUsuario.rows[0]);
   } catch (error) {
     console.log(error);
-    res.status(500).json({ mensagem: 'erro interno no servidor' });
+    return res.status(500).json({ mensagem: 'erro interno no servidor' });
   }
 };
 
@@ -86,8 +86,14 @@ usuariosController.login = async (req, res) => {
     });
   } catch (error) {
     console.log(error);
-    res.status(500).json({ mensagem: 'erro interno no servidor' });
+    return res.status(500).json({ mensagem: 'erro interno no servidor' });
   }
 };
+
+usuariosController.detalhar = async (req, res) => {
+  const usuario = req.usuario;
+
+  return res.status(200).json(usuario);
+}
 
 module.exports = usuariosController;

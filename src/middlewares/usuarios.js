@@ -8,7 +8,7 @@ usuariosMiddlewares.validaToken = async (req, res, next) => {
 
     try {
         if (!authorization) {
-            return res.status(401).json({ mensagem: 'Usuário não autorizado.' });
+            return res.status(401).json({ mensagem: 'Para acessar este recurso um token de autenticação válido deve ser enviado.' });
         }
 
         const token = authorization.split(' ')[1];
@@ -18,7 +18,7 @@ usuariosMiddlewares.validaToken = async (req, res, next) => {
         const { rows, rowCount } = await pool.query('select * from usuarios where id = $1;', [id]);
 
         if (rowCount === 0) {
-            return res.status(401).json({ mensagem: 'Usuário não autorizado.' });
+            return res.status(401).json({ mensagem: 'Para acessar este recurso um token de autenticação válido deve ser enviado.' });
         }
 
         const { senha, ...usuario } = rows[0];
@@ -27,8 +27,12 @@ usuariosMiddlewares.validaToken = async (req, res, next) => {
 
         next();
     } catch (error) {
+        if (error.message === 'invalid signature') {
+            return res.status(401).json({ mensagem: 'Para acessar este recurso um token de autenticação válido deve ser enviado.' });
+        }
+
         console.log(error);
-        res.status(500).json({ mensagem: 'erro interno no servidor' });
+        return res.status(500).json({ mensagem: 'erro interno no servidor' });
     }
 }
 
