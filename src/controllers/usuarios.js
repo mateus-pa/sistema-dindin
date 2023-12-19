@@ -1,5 +1,6 @@
 const pool = require('../database/conexao');
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 
 const usuariosController = {};
 
@@ -45,6 +46,44 @@ usuariosController.cadastrar = async function (req, res) {
     );
 
     return res.status(201).json(novoUsuario.rows[0]);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ mensagem: 'erro interno no servidor' });
+  }
+};
+
+usuariosController.login = async (req, res) => {
+  const { email, senha } = req.body;
+
+  try {
+    if (!email) {
+      return res.status(400).json({ mensagem: 'O campo email é obrigatório.' });
+    }
+
+    if (!senha) {
+      return res.status(400).json({ mensagem: 'O campo senha é obrigatório.' });
+    }
+
+    const { rows, rowCount } = await pool.query('select * from usuarios where email = $1;', [email]);
+
+    if (rowCount === 0) {
+      return res.status(400).json({ mensagem: 'Usuário e/ou senha inválido(s).' });
+    }
+
+    const { senha: senhaUsuario, ...usuario } = rows[0];
+
+    const senhaValida = await bcrypt.compare(senha, senhaUsuario);
+
+    if (!senhaValida) {
+      return res.status(400).json({ mensagem: 'Usuário e/ou senha inválido(s).' });
+    }
+
+    const token = jwt.sign({ id: usuario.id }, process.env.JWT_PASSWORD, { expiresIn: '8h' });
+
+    return res.status(200).json({
+      usuario,
+      token
+    });
   } catch (error) {
     console.log(error);
     res.status(500).json({ mensagem: 'erro interno no servidor' });
