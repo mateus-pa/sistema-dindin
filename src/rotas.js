@@ -24,5 +24,6 @@ rotas.get('/usuario', detalhar);
 rotas.put('/usuario', atualizar);
 
 rotas.post('/transacao', transacoesController.cadastrar);
+rotas.delete('/transacao/:id', transacoesController.remover);
 
 module.exports = rotas;

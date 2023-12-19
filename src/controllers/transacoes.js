@@ -42,4 +42,31 @@ transacoesController.cadastrar = async (req, res) => {
     }
 }
 
+transacoesController.remover = async (req, res) => {
+    const usuario = req.usuario;
+    const { id } = req.params;
+
+    try {
+        const transacaoExiste = await pool.query(`select *
+        from transacoes
+        where id = $1
+        and usuario_id = $2;`, [parseInt(id), usuario.id]);
+
+        if (transacaoExiste.rowCount === 0) {
+            return res.status(404).json({ mensagem: 'Transação não encontrada.' });
+        }
+
+        await pool.query(`delete
+        from transacoes
+        where id = $1
+        and usuario_id = $2;`, [parseInt(id), usuario.id]);
+
+        return res.status(204).send();
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({ mensagem: 'erro interno no servidor' });
+    }
+
+}
+
 module.exports = transacoesController;
