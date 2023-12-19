@@ -4,14 +4,14 @@ const jwt = require('jsonwebtoken');
 usuariosMiddlewares = {};
 
 usuariosMiddlewares.validaToken = async (req, res, next) => {
-    const { authorizations } = req.headers;
+    const { authorization } = req.headers;
 
     try {
-        if (!authorizations) {
+        if (!authorization) {
             return res.status(401).json({ mensagem: 'Usuário não autorizado.' });
         }
 
-        const token = authorizations.split(' ')[1];
+        const token = authorization.split(' ')[1];
 
         const { id } = jwt.verify(token, process.env.JWT_PASSWORD);
 

@@ -11,6 +11,4 @@ rotas.post('/login', login);
 
 rotas.use(validaToken);
 
-
-
 module.exports = rotas;
