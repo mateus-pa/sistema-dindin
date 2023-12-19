@@ -22,3 +22,8 @@ CREATE TABLE IF NOT EXISTS transacoes(
   categoria_id INTEGER REFERENCES categorias(id),
   usuario_id INTEGER REFERENCES usuarios(id)
 );
+
+INSERT INTO categorias(descricao)
+VALUES ('Alimentação'), ('Assinaturas e Serviços'), ('Casa'), ('Mercado'),
+('Cuidados Pessoais'), ('Educação'), ('Família'), ('Lazer'), ('Pets'), ('Presentes'),
+('Roupas'), ('Saúde'), ('Transporte'), ('Salário'), ('Vendas'), ('Outras receitas'), ('Outras despesas');
