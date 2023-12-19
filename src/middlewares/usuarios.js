@@ -31,6 +31,10 @@ usuariosMiddlewares.validaToken = async (req, res, next) => {
             return res.status(401).json({ mensagem: 'Para acessar este recurso um token de autenticação válido deve ser enviado.' });
         }
 
+        if (error.message === 'jwt expired') {
+            return res.status(401).json({ mensagem: 'Token expirado. Para acessar este recurso um token de autenticação válido deve ser enviado.' })
+        }
+
         console.log(error);
         return res.status(500).json({ mensagem: 'erro interno no servidor' });
     }
