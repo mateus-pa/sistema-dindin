@@ -33,7 +33,7 @@ usuariosController.cadastrar = async function (req, res) {
       [email]
     );
 
-    if (emailExiste.rows[0].count !== 0) {
+    if (parseInt(emailExiste.rows[0].count) !== 0) {
       return res.status(400).json({ mensagem: 'Este email já existe.' });
     }
 
