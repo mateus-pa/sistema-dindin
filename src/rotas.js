@@ -23,6 +23,7 @@ rotas.use(validaToken);
 rotas.get('/usuario', detalhar);
 rotas.put('/usuario', atualizar);
 
+rotas.get('/transacao', transacoesController.listar);
 rotas.post('/transacao', transacoesController.cadastrar);
 rotas.delete('/transacao/:id', transacoesController.remover);
 

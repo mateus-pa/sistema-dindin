@@ -42,6 +42,23 @@ transacoesController.cadastrar = async (req, res) => {
     }
 }
 
+transacoesController.listar = async (req, res) => {
+    const usuario = req.usuario;
+
+    try {
+        const listaTransacoes = await pool.query(`select t.id, t.tipo, t.descricao, t.valor, t.data, t.usuario_id, t.categoria_id, c.descricao as categoria_nome
+        from transacoes t
+        join categorias c
+        on t.categoria_id = c.id
+        where t.usuario_id = $1;`, [usuario.id]);
+
+        return res.status(200).json(listaTransacoes.rows);
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({ mensagem: 'erro interno no servidor' });
+    }
+}
+
 transacoesController.remover = async (req, res) => {
     const usuario = req.usuario;
     const { id } = req.params;
