@@ -153,4 +153,36 @@ transacoesController.remover = async (req, res) => {
     }
 }
 
+transacoesController.obterExtrato = async (req, res) => {
+    const usuario = req.usuario;
+
+    try {
+        const { rows } = await pool.query(`select sum(valor)
+        from transacoes
+        where usuario_id = $1
+        group by tipo;`, [usuario.id]);
+
+        let entrada = 0;
+        let saida = 0;
+
+        if (rows[0]) {
+            entrada += parseInt(rows[0].sum);
+        }
+
+        if (rows[1]) {
+            saida += parseInt(rows[1].sum);
+        }
+
+        const extrato = {
+            entrada,
+            saida
+        }
+
+        res.status(200).json(extrato);
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({ mensagem: 'erro interno no servidor' });
+    }
+}
+
 module.exports = transacoesController;
