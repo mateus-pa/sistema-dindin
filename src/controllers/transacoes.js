@@ -106,7 +106,6 @@ transacoesController.remover = async (req, res) => {
         console.log(error);
         return res.status(500).json({ mensagem: 'erro interno no servidor' });
     }
-
 }
 
 module.exports = transacoesController;

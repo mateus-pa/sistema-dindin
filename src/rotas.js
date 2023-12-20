@@ -2,26 +2,23 @@ const express = require('express');
 
 const rotas = express();
 
-const {
-    cadastrar,
-    listar,
-    login,
-    detalhar,
-    atualizar,
-} = require('./controllers/usuarios');
-
+const usuariosController = require('./controllers/usuarios');
+const categoriasController = require('./controllers/categorias');
 const transacoesController = require('./controllers/transacoes');
 
 const { validaToken } = require('./middlewares/usuarios');
 
-rotas.get('/usuarios', listar);
-rotas.post('/usuario', cadastrar);
-rotas.post('/login', login);
+
+rotas.get('/usuarios', usuariosController.listar);
+rotas.post('/usuario', usuariosController.cadastrar);
+rotas.post('/login', usuariosController.login);
 
 rotas.use(validaToken);
 
-rotas.get('/usuario', detalhar);
-rotas.put('/usuario', atualizar);
+rotas.get('/usuario', usuariosController.detalhar);
+rotas.put('/usuario', usuariosController.atualizar);
+
+rotas.get('/categoria', categoriasController.listar);
 
 rotas.get('/transacao', transacoesController.listar);
 rotas.get('/transacao/:id', transacoesController.detalhar);
