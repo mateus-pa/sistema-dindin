@@ -8,8 +8,6 @@ const transacoesController = require('./controllers/transacoes');
 
 const { validaToken } = require('./middlewares/usuarios');
 
-
-rotas.get('/usuarios', usuariosController.listar);
 rotas.post('/usuario', usuariosController.cadastrar);
 rotas.post('/login', usuariosController.login);
 
@@ -26,6 +24,5 @@ rotas.get('/transacao/:id', transacoesController.detalhar);
 rotas.post('/transacao', transacoesController.cadastrar);
 rotas.put('/transacao/:id', transacoesController.atualizar);
 rotas.delete('/transacao/:id', transacoesController.remover);
-
 
 module.exports = rotas;

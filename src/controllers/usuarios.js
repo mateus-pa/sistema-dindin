@@ -4,15 +4,6 @@ const jwt = require('jsonwebtoken');
 
 const usuariosController = {};
 
-usuariosController.listar = async (req, res) => {
-  try {
-    const usuarios = await pool.query('SELECT * FROM usuarios');
-    return res.json(usuarios.rows);
-  } catch (error) {
-    return res.status(400).json(error);
-  }
-};
-
 usuariosController.cadastrar = async function (req, res) {
   const { nome, email, senha } = req.body;
 
@@ -35,7 +26,12 @@ usuariosController.cadastrar = async function (req, res) {
     );
 
     if (parseInt(emailExiste.rows[0].count) !== 0) {
-      return res.status(400).json({ mensagem: 'O e-mail informado já está sendo utilizado por outro usuário.' });
+      return res
+        .status(400)
+        .json({
+          mensagem:
+            'O e-mail informado já está sendo utilizado por outro usuário.',
+        });
     }
 
     const senhaCriptografada = await bcrypt.hash(senha, 10);
@@ -64,10 +60,15 @@ usuariosController.login = async (req, res) => {
       return res.status(400).json({ mensagem: 'O campo senha é obrigatório.' });
     }
 
-    const { rows, rowCount } = await pool.query('select * from usuarios where email = $1;', [email]);
+    const { rows, rowCount } = await pool.query(
+      'select * from usuarios where email = $1;',
+      [email]
+    );
 
     if (rowCount === 0) {
-      return res.status(400).json({ mensagem: 'Usuário e/ou senha inválido(s).' });
+      return res
+        .status(400)
+        .json({ mensagem: 'Usuário e/ou senha inválido(s).' });
     }
 
     const { senha: senhaUsuario, ...usuario } = rows[0];
@@ -75,14 +76,18 @@ usuariosController.login = async (req, res) => {
     const senhaValida = await bcrypt.compare(senha, senhaUsuario);
 
     if (!senhaValida) {
-      return res.status(400).json({ mensagem: 'Usuário e/ou senha inválido(s).' });
+      return res
+        .status(400)
+        .json({ mensagem: 'Usuário e/ou senha inválido(s).' });
     }
 
-    const token = jwt.sign({ id: usuario.id }, process.env.JWT_PASSWORD, { expiresIn: '8h' });
+    const token = jwt.sign({ id: usuario.id }, process.env.JWT_PASSWORD, {
+      expiresIn: '8h',
+    });
 
     return res.status(200).json({
       usuario,
-      token
+      token,
     });
   } catch (error) {
     console.log(error);
@@ -94,7 +99,7 @@ usuariosController.detalhar = async (req, res) => {
   const usuario = req.usuario;
 
   return res.status(200).json(usuario);
-}
+};
 
 usuariosController.atualizar = async (req, res) => {
   const { nome, email, senha } = req.body;
@@ -119,22 +124,30 @@ usuariosController.atualizar = async (req, res) => {
     );
 
     if (parseInt(emailExiste.rows[0].count) !== 0) {
-      return res.status(400).json({ mensagem: 'O e-mail informado já está sendo utilizado por outro usuário.' });
+      return res
+        .status(400)
+        .json({
+          mensagem:
+            'O e-mail informado já está sendo utilizado por outro usuário.',
+        });
     }
 
     const senhaCriptografada = await bcrypt.hash(senha, 10);
 
-    await pool.query(`update usuarios
+    await pool.query(
+      `update usuarios
     set nome = $1,
     email = $2,
     senha = $3
-    where id = $4;`, [nome, email, senhaCriptografada, usuario.id]);
+    where id = $4;`,
+      [nome, email, senhaCriptografada, usuario.id]
+    );
 
     return res.status(204).send();
   } catch (error) {
     console.log(error);
     return res.status(500).json({ mensagem: 'erro interno no servidor' });
   }
-}
+};
 
 module.exports = usuariosController;
