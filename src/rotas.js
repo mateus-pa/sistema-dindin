@@ -23,6 +23,7 @@ rotas.get('/categoria', categoriasController.listar);
 rotas.get('/transacao', transacoesController.listar);
 rotas.get('/transacao/:id', transacoesController.detalhar);
 rotas.post('/transacao', transacoesController.cadastrar);
+rotas.put('/transacao/:id', transacoesController.atualizar);
 rotas.delete('/transacao/:id', transacoesController.remover);
 
 module.exports = rotas;
