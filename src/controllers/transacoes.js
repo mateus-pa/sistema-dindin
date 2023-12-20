@@ -2,6 +2,46 @@ const pool = require('../database/conexao');
 
 const transacoesController = {};
 
+transacoesController.listar = async (req, res) => {
+    const usuario = req.usuario;
+
+    try {
+        const listaTransacoes = await pool.query(`select t.id, t.tipo, t.descricao, t.valor, t.data, t.usuario_id, t.categoria_id, c.descricao as categoria_nome
+        from transacoes t
+        join categorias c
+        on t.categoria_id = c.id
+        where t.usuario_id = $1;`, [usuario.id]);
+
+        return res.status(200).json(listaTransacoes.rows);
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({ mensagem: 'erro interno no servidor' });
+    }
+}
+
+transacoesController.detalhar = async (req, res) => {
+    const usuario = req.usuario;
+    const { id } = req.params;
+
+    try {
+        const detalhesTransacao = await pool.query(`select t.id, t.tipo, t.descricao, t.valor, t.data, t.usuario_id, t.categoria_id, c.descricao as categoria_nome
+        from transacoes t
+        join categorias c
+        on t.categoria_id = c.id
+        where t.usuario_id = $1
+        and t.id = $2;`, [usuario.id, parseInt(id)]);
+
+        if (detalhesTransacao.rowCount === 0) {
+            return res.status(404).json({ mensagem: "Transação não encontrada." });
+        }
+
+        return res.status(200).json(detalhesTransacao.rows[0]);
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({ mensagem: 'erro interno no servidor' });
+    }
+}
+
 transacoesController.cadastrar = async (req, res) => {
     const usuario = req.usuario;
     const { descricao, valor, data, categoria_id, tipo } = req.body;
@@ -36,23 +76,6 @@ transacoesController.cadastrar = async (req, res) => {
         where t.id = $1;`, [rows[0].id]);
 
         return res.status(201).json(novaTransacao.rows[0]);
-    } catch (error) {
-        console.log(error);
-        return res.status(500).json({ mensagem: 'erro interno no servidor' });
-    }
-}
-
-transacoesController.listar = async (req, res) => {
-    const usuario = req.usuario;
-
-    try {
-        const listaTransacoes = await pool.query(`select t.id, t.tipo, t.descricao, t.valor, t.data, t.usuario_id, t.categoria_id, c.descricao as categoria_nome
-        from transacoes t
-        join categorias c
-        on t.categoria_id = c.id
-        where t.usuario_id = $1;`, [usuario.id]);
-
-        return res.status(200).json(listaTransacoes.rows);
     } catch (error) {
         console.log(error);
         return res.status(500).json({ mensagem: 'erro interno no servidor' });
